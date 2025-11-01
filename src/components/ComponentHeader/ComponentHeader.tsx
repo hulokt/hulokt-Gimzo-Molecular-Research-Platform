@@ -1,5 +1,5 @@
 "use client";
-import Modal from "@/app/ui/modals/page";
+import Modal from "@/components/Modal/Modal";
 import React from "react";
 
 interface ComponentHeaderProps {
@@ -20,7 +20,7 @@ const ComponentHeader: React.FC<ComponentHeaderProps> = ({
 
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+      <h2 className="text-title-md2 font-semibold text-black">
         {pageName}
       </h2>
 
@@ -46,24 +46,24 @@ const ComponentHeader: React.FC<ComponentHeaderProps> = ({
               <div className="p-1">
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-1/2">
-                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    <label className="mb-3 block text-sm font-medium text-black">
                       SMILS String
                     </label>
                     <input
                       type="text"
                       placeholder="Enter your first name"
-                      className="w-full rounded-lg border-[1.5px] bg-transparent  px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                     />
                   </div>
 
                   <div className="w-full xl:w-1/2">
-                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    <label className="mb-3 block text-sm font-medium text-black">
                       Number of Molecules{" "}
                     </label>
                     <input
                       type="text"
                       placeholder="Enter your last name"
-                      className="w-full rounded-lg border-[1.5px] bg-transparent  px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                     />
                   </div>
                 </div>
