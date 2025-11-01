@@ -25,12 +25,22 @@ export async function createUser(user: CreateUserParams) {
       userBio: user.userBio || "",
     });
 
+    // Send verification email, but don't fail registration if it fails
     const verificationUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/verify-email?token=${newUser._id}`;
-    await sendVerificationEmail(
-      newUser.email,
-      newUser.firstName || "User",
-      verificationUrl,
-    );
+    try {
+      await sendVerificationEmail(
+        newUser.email,
+        newUser.firstName || "User",
+        verificationUrl,
+      );
+      console.log("Verification email sent successfully");
+    } catch (emailError: any) {
+      // Log the error but don't fail the registration
+      console.error("Failed to send verification email:", emailError);
+      console.error("User was created successfully, but email could not be sent.");
+      console.error("Email error details:", emailError.message);
+      // Continue with successful registration even if email fails
+    }
 
     return JSON.parse(JSON.stringify(newUser));
   } catch (error: any) {

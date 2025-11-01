@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ComponentHeader from "@/components/ComponentHeader/ComponentHeader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createUser } from "@/lib/actions/user.actions";
@@ -11,6 +12,7 @@ import {
   LockIcon,
   MailIcon,
   UserIcon,
+  CheckCircleIcon,
 } from "lucide-react";
 
 const SignUp: React.FC = () => {
@@ -25,8 +27,20 @@ const SignUp: React.FC = () => {
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Disable body scrolling when component mounts
+    document.body.style.overflow = "hidden";
+    // Re-enable scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -36,11 +50,22 @@ const SignUp: React.FC = () => {
       ...prev,
       [name]: value, // Ensure the value is treated as a string
     }));
+    // Clear messages when user starts typing
+    if (errors) setErrors(null);
+    if (success) setSuccess(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    setImageFile(file);
+    if (file) {
+      setImageFile(file);
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const convertImageToBase64 = async (file: File): Promise<string> => {
@@ -110,6 +135,11 @@ const SignUp: React.FC = () => {
       const createdUser = await createUser(newUser);
       console.log(createdUser);
 
+      // Show success message
+      setSuccess("Registration successful! You can now sign in.");
+      setErrors(null);
+      
+      // Clear form
       setUser({
         email: "",
         firstName: "",
@@ -120,7 +150,13 @@ const SignUp: React.FC = () => {
         userBio: "",
       });
       setImageFile(null);
+      setImagePreview(null);
       setIsLoading(false);
+
+      // Redirect to sign in after 2 seconds
+      setTimeout(() => {
+        router.push("/auth-page/signin");
+      }, 2000);
     } catch (error) {
       console.error("Error registering user:", error);
       setErrors("Registration failed.");
@@ -134,31 +170,32 @@ const SignUp: React.FC = () => {
     <DefaultLayout>
       <ComponentHeader pageName="Sign Up" />
 
-      <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center" onSubmit={handleSubmit}>
-          <div className="hidden w-full xl:block xl:w-1/2">
-            <div className="px-26 py-17.5 text-center">
-              <Link className="mb-5.5 inline-block" href="/">
+      <div className="h-[calc(100vh-120px)] overflow-hidden">
+        <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="flex flex-wrap items-start" onSubmit={handleSubmit}>
+            <div className="hidden w-full xl:flex xl:w-1/2 xl:items-center xl:justify-center">
+              <div className="px-8 py-6 text-center">
+              <Link className="mb-4 mt-30 block" href="/">
                 <div className="flex flex-row items-center justify-center space-x-2">
-                  <div className="ml-3 rounded-lg bg-[#3c4fe0] p-1">
+                  <div className="rounded-lg bg-[#3c4fe0] p-1">
                     <Image
-                      width={32}
-                      height={32}
+                      width={24}
+                      height={24}
                       src={"/images/logo/dna.svg"}
                       alt="Logo"
                       priority
                     />
                   </div>
-                  <p className="text-xl font-semibold text-black">
+                  <p className="text-base font-semibold text-black">
                     Gimzo — Molecular Research Platform
                   </p>
                 </div>
               </Link>
 
-              <span className="mt-15 inline-block">
+              <div className="mt-4 flex justify-center">
                 <svg
-                  width="350"
-                  height="350"
+                  width="250"
+                  height="250"
                   viewBox="0 0 350 350"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -276,7 +313,7 @@ const SignUp: React.FC = () => {
                     fill="#1C2434"
                   />
                 </svg>
-              </span>
+              </div>
             </div>
           </div>
 
@@ -284,54 +321,55 @@ const SignUp: React.FC = () => {
             onSubmit={handleSubmit}
             className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2"
           >
-            <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-              <span className="mb-1.5 block font-medium">Start for free</span>
-              <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+            <div className="w-full p-4 xl:p-6">
+              <span className="mb-1 block text-sm font-medium">Start for free</span>
+              <h2 className="mb-4 text-xl font-bold text-black dark:text-white">
                 Sign Up to Gimzo
               </h2>
 
-              <div>
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    First Name
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={user.firstName}
-                      onChange={handleInputChange}
-                      placeholder="Enter your first name"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
+              <div className="space-y-2.5">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                      First Name
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={user.firstName}
+                        onChange={handleInputChange}
+                        placeholder="First name"
+                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                      <span className="absolute right-2 top-2">
+                        <UserIcon size={16} />
+                      </span>
+                    </div>
+                  </div>
 
-                    <span className="absolute right-4 top-4">
-                      <UserIcon />
-                    </span>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                      Last Name
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={user.lastName}
+                        onChange={handleInputChange}
+                        placeholder="Last name"
+                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                      <span className="absolute right-2 top-2">
+                        <UserIcon size={16} />
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Last Name
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={user.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Enter your last name"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
-
-                    <span className="absolute right-4 top-4">
-                      <UserIcon />
-                    </span>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
                     Email
                   </label>
                   <div className="relative">
@@ -341,75 +379,73 @@ const SignUp: React.FC = () => {
                       value={user.email}
                       onChange={handleInputChange}
                       placeholder="Enter your email"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
-
-                    <span className="absolute right-4 top-4">
-                      <MailIcon />
+                    <span className="absolute right-2 top-2">
+                      <MailIcon size={16} />
                     </span>
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      name="password"
-                      value={user.password}
-                      onChange={handleInputChange}
-                      placeholder="Enter your password"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        name="password"
+                        value={user.password}
+                        onChange={handleInputChange}
+                        placeholder="Password"
+                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                      <span className="absolute right-2 top-2">
+                        <LockIcon size={16} />
+                      </span>
+                    </div>
+                  </div>
 
-                    <span className="absolute right-4 top-4">
-                      <LockIcon />
-                    </span>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        name="confirmPassword"
+                        value={user.confirmPassword}
+                        onChange={handleInputChange}
+                        placeholder="Confirm"
+                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                      <span className="absolute right-2 top-2">
+                        <LockIcon size={16} />
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={user.confirmPassword}
-                      onChange={handleInputChange}
-                      placeholder="Re-enter your password"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
-                    <span className="absolute right-4 top-4">
-                      <LockIcon />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
                     Bio
                   </label>
-                  <div className="relative">
-                    <textarea
-                      name="bio"
-                      value={user.userBio}
-                      onChange={handleInputChange}
-                      placeholder="Enter your bio"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
-                  </div>
+                  <textarea
+                    name="userBio"
+                    value={user.userBio}
+                    onChange={handleInputChange}
+                    placeholder="Enter your bio (optional)"
+                    rows={2}
+                    className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-3 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
                 </div>
 
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
                     Profile Picture
                   </label>
                   <div className="relative flex items-center justify-center">
-                    {/* Hidden file input */}
                     <input
                       type="file"
                       accept="image/*"
@@ -417,34 +453,64 @@ const SignUp: React.FC = () => {
                       className="hidden"
                       id="fileInput"
                     />
-
-                    {/* Custom icon for file input */}
-                    <div
-                      onClick={() =>
-                        document.getElementById("fileInput")?.click()
-                      }
-                      className="flex cursor-pointer flex-col items-center"
-                    >
-                      {/* Replace with any icon or image */}
-                      <CameraIcon size={25} />
-                      <span className="text-gray-500 mt-2 text-sm">
-                        Choose Profile Picture
-                      </span>
-                    </div>
+                    {imagePreview ? (
+                      <div className="relative w-full">
+                        <div className="relative mx-auto h-32 w-32 overflow-hidden rounded-full border-2 border-primary">
+                          <Image
+                            src={imagePreview}
+                            alt="Profile preview"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            document.getElementById("fileInput")?.click()
+                          }
+                          className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary bg-primary/10 py-2 text-xs text-primary transition hover:bg-primary/20"
+                        >
+                          <CameraIcon size={16} />
+                          <span>Change Picture</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() =>
+                          document.getElementById("fileInput")?.click()
+                        }
+                        className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-stroke p-4 hover:border-primary"
+                      >
+                        <CameraIcon size={20} />
+                        <span className="mt-2 text-xs text-gray-500">
+                          Choose Picture
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {errors && <div className="mb-4 text-red">{errors}</div>}
-                <div className="mb-5">
+                {errors && (
+                  <div className="rounded-lg border border-red bg-red/10 p-2 text-xs text-red">
+                    {errors}
+                  </div>
+                )}
+                {success && (
+                  <div className="flex items-center gap-2 rounded-lg border border-green bg-green/10 p-2 text-xs text-green">
+                    <CheckCircleIcon className="h-4 w-4" />
+                    <span>{success}</span>
+                  </div>
+                )}
+                
+                <div className="pt-1">
                   <button
                     type="submit"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-sm text-white transition hover:bg-opacity-90"
                     disabled={isLoading}
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center">
-                        <LoaderCircle className="mr-2 animate-spin" /> Signing
-                        Up...
+                        <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> Signing Up...
                       </span>
                     ) : (
                       "Sign Up"
@@ -452,10 +518,10 @@ const SignUp: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="mt-6 text-center">
+                <div className="pt-1 text-center text-xs">
                   <p>
                     Already have an account?{" "}
-                    <Link href="/auth-page/signin" className="text-primary">
+                    <Link href="/auth-page/signin" className="text-primary hover:underline">
                       Sign in
                     </Link>
                   </p>
@@ -463,6 +529,7 @@ const SignUp: React.FC = () => {
               </div>
             </div>
           </form>
+          </div>
         </div>
       </div>
     </DefaultLayout>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { LoaderCircle, LockIcon, MailIcon } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
@@ -13,6 +13,15 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Disable body scrolling when component mounts
+    document.body.style.overflow = "hidden";
+    // Re-enable scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,91 +62,87 @@ const SignIn: React.FC = () => {
     <DefaultLayout>
       <ComponentHeader pageName="Sign In" />
 
-      <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center">
-          <div className="mx-auto w-full xl:w-4/6">
-            <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-              <span className="mb-1.5 block font-medium">Start for free</span>
-              <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to Gimzo — Molecular Research Platform
-              </h2>
+      <div className="flex h-[calc(100vh-120px)] items-center justify-center overflow-hidden">
+        <div className="w-full max-w-md rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="w-full p-6">
+            <span className="mb-1 block text-sm font-medium">Start for free</span>
+            <h2 className="mb-4 text-xl font-bold text-black dark:text-white">
+              Sign In to Gimzo
+            </h2>
 
-              {error && <div className="text-red-500 mb-4">{error}</div>}
+            {error && <div className="mb-3 text-sm text-red-500">{error}</div>}
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      required
-                      disabled={isLoading}
-                    />
-                    <span className="absolute right-4 top-4">
-                      <MailIcon />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="6+ Characters, 1 Capital letter"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      required
-                      disabled={isLoading}
-                    />
-                    <span className="absolute right-4 top-4">
-                      <LockIcon />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mb-5">
-                  <button
-                    type="submit"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-black dark:text-white">
+                  Email
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full rounded-lg border border-stroke bg-transparent py-2.5 pl-4 pr-10 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    required
                     disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="flex items-center justify-center">
-                        <LoaderCircle className="mr-2 animate-spin" /> Signing
-                        In...
-                      </span>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </button>
+                  />
+                  <span className="absolute right-3 top-2.5">
+                    <MailIcon size={18} />
+                  </span>
                 </div>
+              </div>
 
-                <div className="mt-6 text-center">
-                  <p>
-                    Don’t have an account?{" "}
-                    <Link href="/auth-page/signup" className="text-primary">
-                      Sign Up
-                    </Link>
-                  </p>
-                  <p>
-                    Forgot Password?{" "}
-                    <Link href="/forget-password" className="text-primary">
-                      Reset
-                    </Link>
-                  </p>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-black dark:text-white">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="w-full rounded-lg border border-stroke bg-transparent py-2.5 pl-4 pr-10 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    required
+                    disabled={isLoading}
+                  />
+                  <span className="absolute right-3 top-2.5">
+                    <LockIcon size={18} />
+                  </span>
                 </div>
-              </form>
-            </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-sm text-white transition hover:bg-opacity-90"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> Signing In...
+                    </span>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
+              </div>
+
+              <div className="space-y-1 pt-2 text-center text-xs">
+                <p>
+                  Don't have an account?{" "}
+                  <Link href="/auth-page/signup" className="text-primary hover:underline">
+                    Sign Up
+                  </Link>
+                </p>
+                <p>
+                  <Link href="/forget-password" className="text-primary hover:underline">
+                    Forgot Password?
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </div>

@@ -38,7 +38,9 @@ export default function DefaultLayout({
           <main>
             <div
               className={`mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 ${
-                pathname === "/molecule-bank" ? "overflow-hidden" : ""
+                pathname === "/molecule-bank" || publicRoutes.includes(pathname)
+                  ? "overflow-hidden"
+                  : ""
               }`}
             >
               {children}
