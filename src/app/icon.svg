@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#3C50E0"/>
+  
+  <!-- Hexagonal molecular structure -->
+  <g stroke="#ffffff" stroke-width="1.5" fill="none">
+    <path d="M16 6L23 10V18L16 22L9 18V10L16 6Z" stroke-linejoin="round"/>
+    <!-- Molecular bonds -->
+    <line x1="16" y1="6" x2="16" y2="3"/>
+    <line x1="23" y1="10" x2="26" y2="8.5"/>
+    <line x1="23" y1="18" x2="26" y2="19.5"/>
+    <line x1="16" y1="22" x2="16" y2="25"/>
+    <line x1="9" y1="18" x2="6" y2="19.5"/>
+    <line x1="9" y1="10" x2="6" y2="8.5"/>
+  </g>
+  
+  <!-- Atom nodes -->
+  <circle cx="16" cy="6" r="2.2" fill="#ffffff"/>
+  <circle cx="23" cy="10" r="1.8" fill="#ffffff" opacity="0.9"/>
+  <circle cx="23" cy="18" r="1.8" fill="#ffffff" opacity="0.9"/>
+  <circle cx="16" cy="22" r="2.2" fill="#ffffff"/>
+  <circle cx="9" cy="18" r="1.8" fill="#ffffff" opacity="0.9"/>
+  <circle cx="9" cy="10" r="1.8" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Outer nodes -->
+  <circle cx="16" cy="3" r="1.3" fill="#ffffff" opacity="0.65"/>
+  <circle cx="26" cy="8.5" r="1.3" fill="#ffffff" opacity="0.65"/>
+  <circle cx="26" cy="19.5" r="1.3" fill="#ffffff" opacity="0.65"/>
+  <circle cx="16" cy="25" r="1.3" fill="#ffffff" opacity="0.65"/>
+  <circle cx="6" cy="19.5" r="1.3" fill="#ffffff" opacity="0.65"/>
+  <circle cx="6" cy="8.5" r="1.3" fill="#ffffff" opacity="0.65"/>
+  
+  <!-- Center glow -->
+  <circle cx="16" cy="14" r="2.5" fill="#ffffff" opacity="0.2"/>
+</svg>

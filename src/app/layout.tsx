@@ -28,6 +28,12 @@ export default function RootLayout({
   });
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/images/favicon.ico" sizes="32x32" />
+        <title>Gimzo - Molecular Research Platform</title>
+        <meta name="description" content="AI-powered molecular research platform for drug discovery and compound analysis" />
+      </head>
       <body suppressHydrationWarning={true}>
         <Script
           src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"
