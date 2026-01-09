@@ -672,6 +672,10 @@ export async function editMessage(
   try {
     await connectToDatabase();
 
+    if (!groupId || !messageId || !userId) {
+      throw new Error("Missing required parameters");
+    }
+
     const group = await Group.findById(groupId);
     if (!group) throw new Error("Group not found");
 
@@ -691,6 +695,7 @@ export async function editMessage(
     }
     
     if (!message) {
+      console.error(`Message not found. GroupId: ${groupId}, MessageId: ${messageIdStr}`);
       throw new Error("Message not found");
     }
     
@@ -725,6 +730,10 @@ export async function deleteMessage(
   try {
     await connectToDatabase();
 
+    if (!groupId || !messageId || !userId) {
+      throw new Error("Missing required parameters");
+    }
+
     const group = await Group.findById(groupId);
     if (!group) throw new Error("Group not found");
 
@@ -744,6 +753,7 @@ export async function deleteMessage(
     }
     
     if (!message) {
+      console.error(`Message not found. GroupId: ${groupId}, MessageId: ${messageIdStr}, Total messages: ${group.messages.length}`);
       throw new Error("Message not found");
     }
 

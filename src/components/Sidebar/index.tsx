@@ -178,7 +178,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               Unlock advanced AI models & unlimited molecule generation
             </p>
             <button className="w-full py-2 text-xs font-medium text-white bg-[#3C50E0] rounded-lg hover:bg-[#3C50E0]/90 transition-colors">
-              Upgrade Now
+              Coming Soon
             </button>
           </div>
         </div>

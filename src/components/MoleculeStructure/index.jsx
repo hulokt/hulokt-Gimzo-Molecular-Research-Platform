@@ -6,19 +6,41 @@ import initRDKitModule from "@rdkit/rdkit";
 
 const initRDKit = (() => {
   let rdkitLoadingPromise;
-  return () => {
-    if (!rdkitLoadingPromise) {
+  let rdkitInstance;
+  
+  return {
+    load: () => {
+      // If we already have a loaded instance, return it immediately
+      if (rdkitInstance) {
+        return Promise.resolve(rdkitInstance);
+      }
+      
+      // If there's already a loading promise in progress, return it
+      if (rdkitLoadingPromise) {
+        return rdkitLoadingPromise;
+      }
+      
+      // Create new loading promise
       rdkitLoadingPromise = new Promise((resolve, reject) => {
         initRDKitModule()
           .then((RDKit) => {
+            rdkitInstance = RDKit;
+            rdkitLoadingPromise = null;
             resolve(RDKit);
           })
           .catch((e) => {
+            rdkitLoadingPromise = null; // Clear promise on failure to allow retry
             reject(e);
           });
       });
+      
+      return rdkitLoadingPromise;
+    },
+    clearCache: () => {
+      // Clear cached promise and instance to force reload
+      rdkitLoadingPromise = null;
+      rdkitInstance = null;
     }
-    return rdkitLoadingPromise;
   };
 })();
 
@@ -62,7 +84,12 @@ class MoleculeStructure extends Component {
       svg: undefined,
       rdKitLoaded: false,
       rdKitError: false,
+      retryCount: 0,
+      isRetrying: false,
     };
+    
+    this.maxRetries = 3;
+    this.retryTimeouts = [];
   }
 
   drawOnce = (() => {
@@ -136,21 +163,77 @@ class MoleculeStructure extends Component {
     }
   }
 
-  componentDidMount() {
-    initRDKit()
+  loadRDKit = (isRetry = false) => {
+    if (isRetry) {
+      this.setState({ isRetrying: true, rdKitError: false });
+    }
+    
+    initRDKit.load()
       .then((RDKit) => {
         this.RDKit = RDKit;
-        this.setState({ rdKitLoaded: true });
+        this.setState({ 
+          rdKitLoaded: true, 
+          rdKitError: false, 
+          retryCount: 0,
+          isRetrying: false 
+        });
         try {
           this.draw();
         } catch (err) {
-          console.log(err);
+          console.error("Error drawing molecule:", err);
         }
       })
       .catch((err) => {
-        console.log(err);
-        this.setState({ rdKitError: true });
+        console.error("Error loading RDKit:", err);
+        const { retryCount } = this.state;
+        
+        // Auto-retry with exponential backoff
+        if (retryCount < this.maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying RDKit load in ${delay}ms (attempt ${retryCount + 1}/${this.maxRetries})`);
+          
+          const timeout = setTimeout(() => {
+            initRDKit.clearCache(); // Clear cache before retry
+            this.setState({ retryCount: retryCount + 1 });
+            this.loadRDKit(true);
+          }, delay);
+          
+          this.retryTimeouts.push(timeout);
+        } else {
+          // Max retries reached
+          this.setState({ 
+            rdKitError: true, 
+            isRetrying: false 
+          });
+        }
       });
+  };
+
+  handleManualRetry = () => {
+    // Clear all pending retry timeouts
+    this.retryTimeouts.forEach(timeout => clearTimeout(timeout));
+    this.retryTimeouts = [];
+    
+    // Reset state and clear cache
+    initRDKit.clearCache();
+    this.setState({ 
+      retryCount: 0, 
+      rdKitError: false,
+      isRetrying: false 
+    });
+    
+    // Attempt to load
+    this.loadRDKit(true);
+  };
+
+  componentDidMount() {
+    this.loadRDKit();
+  }
+
+  componentWillUnmount() {
+    // Clear any pending retry timeouts
+    this.retryTimeouts.forEach(timeout => clearTimeout(timeout));
+    this.retryTimeouts = [];
   }
 
   componentDidUpdate(prevProps) {
@@ -179,10 +262,37 @@ class MoleculeStructure extends Component {
 
   render() {
     if (this.state.rdKitError) {
-      return "Error loading renderer.";
+      return (
+        <div 
+          className="flex flex-col items-center justify-center p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+          style={{ width: this.props.width, height: this.props.height }}
+        >
+          <p className="text-sm text-red-600 dark:text-red-400 mb-2">Error loading renderer</p>
+          <button
+            onClick={this.handleManualRetry}
+            className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      );
     }
+    
     if (!this.state.rdKitLoaded) {
-      return "Loading renderer...";
+      const { isRetrying, retryCount } = this.state;
+      return (
+        <div 
+          className="flex items-center justify-center p-4"
+          style={{ width: this.props.width, height: this.props.height }}
+        >
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isRetrying ? `Retrying (${retryCount}/${this.maxRetries})...` : "Loading renderer..."}
+            </p>
+          </div>
+        </div>
+      );
     }
 
     const mol = this.RDKit.get_mol(this.props.structure || "invalid");

@@ -125,7 +125,28 @@ function ChatBox() {
   // Message channel
   const { channel } = useChannel(channelName, (message) => {
     if (currentGroup && message.data.groupId === currentGroup._id) {
-      setMessages((prev) => [...prev, message.data]);
+      const { event, data } = message.data;
+      
+      if (event === "edit") {
+        // Update edited message
+        setMessages((prev) => prev.map((m) => {
+          const mId = m._id || m.id;
+          return mId?.toString() === data.messageId?.toString()
+            ? { ...m, text: data.text, isEdited: true, editedAt: data.editedAt }
+            : m;
+        }));
+      } else if (event === "delete") {
+        // Mark message as deleted
+        setMessages((prev) => prev.map((m) => {
+          const mId = m._id || m.id;
+          return mId?.toString() === data.messageId?.toString()
+            ? { ...m, text: "This message was deleted", isDeleted: true, deletedAt: data.deletedAt }
+            : m;
+        }));
+      } else if (!event) {
+        // New message (no event field means it's a new message)
+        setMessages((prev) => [...prev, message.data]);
+      }
     }
   });
 
@@ -610,19 +631,22 @@ function ChatBox() {
         ? await resizeBase64Img(user.photo, 100, 100)
         : "/images/user/default-avatar.png";
       
+      // Save message to database first to get the _id
+      const savedMessage = await addMessageToGroup(currentGroup._id, currentUser._id, messageText);
+      
       const messageData = {
+        _id: savedMessage._id, // Include the database-generated _id
         groupId: currentGroup._id,
         senderId: currentUser._id,
         senderName: `${currentUser.firstName} ${currentUser.lastName}`,
         senderPhoto: resizedImage,
         text: messageText,
         messageType: "text",
-        timestamp: new Date().toISOString(),
+        timestamp: savedMessage.timestamp || new Date().toISOString(),
         connectionId: ably.connection.id,
       };
       
       await channel.publish("message", messageData);
-      await addMessageToGroup(currentGroup._id, currentUser._id, messageText);
       setMessageText("");
     } catch (err) {
       console.error("Error sending message:", err);
@@ -638,33 +662,73 @@ function ChatBox() {
       // Ensure we have the correct message ID format
       const messageId = editingMessage._id || editingMessage.id;
       if (!messageId) {
-        showToast("Message ID not found", "error");
+        console.error("Message object:", editingMessage);
+        showToast("Message ID not found. Please refresh and try again.", "error");
         return;
       }
       
+      const editedAt = new Date();
       await editMessage(currentGroup._id, messageId.toString(), currentUser._id, editText);
+      
+      // Update local state
       setMessages(messages.map((m) => {
         const mId = m._id || m.id;
-        return mId === messageId ? { ...m, text: editText, isEdited: true } : m;
+        return mId === messageId ? { ...m, text: editText, isEdited: true, editedAt } : m;
       }));
+      
+      // Broadcast edit to all users in real-time
+      await channel.publish("message", {
+        event: "edit",
+        groupId: currentGroup._id,
+        data: {
+          messageId: messageId.toString(),
+          text: editText,
+          editedAt,
+        },
+      });
+      
       setEditingMessage(null);
       setEditText("");
       showToast("Message edited", "success");
     } catch (err) {
+      console.error("Edit message error:", err);
       showToast(err.message || "Failed to edit message", "error");
     }
   };
 
   // Delete message
   const handleDeleteMessage = async (messageId) => {
+    if (!messageId) {
+      showToast("Message ID not found. Please refresh and try again.", "error");
+      return;
+    }
+    
     try {
-      await deleteMessage(currentGroup._id, messageId, currentUser._id);
-      setMessages(messages.map((m) => 
-        m._id === messageId ? { ...m, text: "This message was deleted", isDeleted: true } : m
-      ));
+      const deletedAt = new Date();
+      await deleteMessage(currentGroup._id, messageId.toString(), currentUser._id);
+      
+      // Update local state
+      setMessages(messages.map((m) => {
+        const mId = m._id || m.id;
+        return mId === messageId || mId?.toString() === messageId?.toString()
+          ? { ...m, text: "This message was deleted", isDeleted: true, deletedAt }
+          : m;
+      }));
+      
+      // Broadcast delete to all users in real-time
+      await channel.publish("message", {
+        event: "delete",
+        groupId: currentGroup._id,
+        data: {
+          messageId: messageId.toString(),
+          deletedAt,
+        },
+      });
+      
       setMessageMenu(null);
       showToast("Message deleted", "success");
     } catch (err) {
+      console.error("Delete message error:", err);
       showToast(err.message || "Failed to delete message", "error");
     }
   };
