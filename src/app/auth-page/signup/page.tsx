@@ -1,9 +1,8 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ComponentHeader from "@/components/ComponentHeader/ComponentHeader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createUser } from "@/lib/actions/user.actions";
 import {
@@ -101,12 +100,12 @@ const SignUp: React.FC = () => {
     return null;
   }, [user, imageFile]);
 
-  let isSubmitting = false;
+  const isSubmittingRef = useRef(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSubmitting) return;
-    isSubmitting = true;
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
 
     setIsLoading(true);
 
@@ -114,7 +113,7 @@ const SignUp: React.FC = () => {
     if (formError) {
       setErrors(formError);
       setIsLoading(false);
-      isSubmitting = false;
+      isSubmittingRef.current = false;
       return;
     }
 
@@ -131,9 +130,11 @@ const SignUp: React.FC = () => {
         photo: base64Image,
       };
 
-      console.log(newUser);
-      const createdUser = await createUser(newUser);
-      console.log(createdUser);
+      const result = await createUser(newUser);
+      if (result?.error) {
+        setErrors(result.error);
+        return;
+      }
 
       // Show success message
       setSuccess("Registration successful! You can now sign in.");
@@ -159,41 +160,46 @@ const SignUp: React.FC = () => {
       }, 2000);
     } catch (error) {
       console.error("Error registering user:", error);
-      setErrors("Registration failed.");
+      setErrors("Registration failed. Please try again.");
     } finally {
-      isSubmitting = false;
+      isSubmittingRef.current = false;
       setIsLoading(false);
     }
   };
 
   return (
     <DefaultLayout>
-      <ComponentHeader pageName="Sign Up" />
+      <div className="relative h-[calc(100vh-40px)] w-full overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/30 via-indigo-500/30 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/30 via-sky-500/30 to-transparent blur-3xl" />
+        </div>
 
-      <div className="h-[calc(100vh-120px)] overflow-hidden">
-        <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="flex flex-wrap items-start" onSubmit={handleSubmit}>
+        <div className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-white/40 bg-white/70 shadow-[0_40px_120px_-60px_rgba(30,64,175,0.6)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/70">
+          <div className="flex flex-wrap items-stretch">
             <div className="hidden w-full xl:flex xl:w-1/2 xl:items-center xl:justify-center">
-              <div className="px-8 py-6 text-center">
-              <Link className="mb-4 mt-30 block" href="/">
-                <div className="flex flex-row items-center justify-center space-x-2">
-                  <div className="rounded-lg bg-[#3c4fe0] p-1">
-                    <Image
-                      width={24}
-                      height={24}
-                      src={"/images/logo/dna.svg"}
-                      alt="Logo"
-                      priority
-                    />
-                  </div>
-                  <p className="text-base font-semibold text-black">
-                    Gimzo — Molecular Research Platform
-                  </p>
-                </div>
-              </Link>
+              <div className="relative w-full px-10 py-10 text-center">
+                <div className="relative z-10">
+                  <Link className="mb-6 mt-4 inline-flex items-center justify-center" href="/">
+                    <div className="flex flex-row items-center justify-center space-x-2">
+                      <div className="rounded-lg bg-primary p-1.5">
+                        <Image
+                          width={24}
+                          height={24}
+                          src={"/images/logo/dna.svg"}
+                          alt="Logo"
+                          priority
+                          className="brightness-0 invert"
+                        />
+                      </div>
+                      <p className="text-base font-semibold text-slate-900 dark:text-white">
+                        Gimzo — Molecular Research Platform
+                      </p>
+                    </div>
+                  </Link>
 
-              <div className="mt-4 flex justify-center">
-                <svg
+                  <div className="mt-4 flex justify-center">
+                    <svg
                   width="250"
                   height="250"
                   viewBox="0 0 350 350"
@@ -312,25 +318,37 @@ const SignUp: React.FC = () => {
                     d="M310.566 183.213C309.132 182.066 307.174 184.151 307.174 184.151L306.026 173.828C306.026 173.828 298.853 174.687 294.261 173.542C289.67 172.396 288.953 177.7 288.953 177.7C288.716 175.557 288.668 173.399 288.81 171.248C289.096 168.667 292.827 166.087 299.427 164.366C306.026 162.646 309.47 170.101 309.47 170.101C314.061 172.395 312.001 184.36 310.566 183.213Z"
                     fill="#1C2434"
                   />
-                </svg>
+                    </svg>
+                  </div>
+                  <p className="mt-6 text-sm text-slate-600 dark:text-slate-300">
+                    Create a secure profile, add your expertise, and unlock AI
+                    driven molecular discovery tools.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
           <form
             onSubmit={handleSubmit}
-            className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2"
+            className="w-full xl:w-1/2 xl:border-l xl:border-white/20"
           >
-            <div className="w-full p-4 xl:p-6">
-              <span className="mb-1 block text-sm font-medium">Start for free</span>
-              <h2 className="mb-4 text-xl font-bold text-black dark:text-white">
-                Sign Up to Gimzo
-              </h2>
+            <div className="w-full p-6 xl:p-8">
+              <div className="mb-4 text-center xl:text-left">
+                <p className="text-xs font-medium uppercase tracking-[0.3em] text-slate-400">
+                  Start for free
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
+                  Sign up to Gimzo
+                </h2>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
+                  Build your profile to collaborate and generate molecules.
+                </p>
+              </div>
 
               <div className="space-y-2.5">
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                    <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                       First Name
                     </label>
                     <div className="relative">
@@ -340,7 +358,7 @@ const SignUp: React.FC = () => {
                         value={user.firstName}
                         onChange={handleInputChange}
                         placeholder="First name"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                       />
                       <span className="absolute right-2 top-2">
                         <UserIcon size={16} />
@@ -349,7 +367,7 @@ const SignUp: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                    <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                       Last Name
                     </label>
                     <div className="relative">
@@ -359,7 +377,7 @@ const SignUp: React.FC = () => {
                         value={user.lastName}
                         onChange={handleInputChange}
                         placeholder="Last name"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                       />
                       <span className="absolute right-2 top-2">
                         <UserIcon size={16} />
@@ -369,7 +387,7 @@ const SignUp: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                  <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                     Email
                   </label>
                   <div className="relative">
@@ -379,7 +397,7 @@ const SignUp: React.FC = () => {
                       value={user.email}
                       onChange={handleInputChange}
                       placeholder="Enter your email"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                     />
                     <span className="absolute right-2 top-2">
                       <MailIcon size={16} />
@@ -389,7 +407,7 @@ const SignUp: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                    <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                       Password
                     </label>
                     <div className="relative">
@@ -399,7 +417,7 @@ const SignUp: React.FC = () => {
                         value={user.password}
                         onChange={handleInputChange}
                         placeholder="Password"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                       />
                       <span className="absolute right-2 top-2">
                         <LockIcon size={16} />
@@ -408,7 +426,7 @@ const SignUp: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                    <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                       Confirm Password
                     </label>
                     <div className="relative">
@@ -418,7 +436,7 @@ const SignUp: React.FC = () => {
                         value={user.confirmPassword}
                         onChange={handleInputChange}
                         placeholder="Confirm"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-8 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                       />
                       <span className="absolute right-2 top-2">
                         <LockIcon size={16} />
@@ -428,7 +446,7 @@ const SignUp: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                  <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                     Bio
                   </label>
                   <textarea
@@ -437,12 +455,12 @@ const SignUp: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Enter your bio (optional)"
                     rows={2}
-                    className="w-full rounded-lg border border-stroke bg-transparent py-2 pl-3 pr-3 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 py-2 pl-3 pr-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-black dark:text-white">
+                  <label className="mb-1 block text-xs font-medium text-slate-900 dark:text-white">
                     Profile Picture
                   </label>
                   <div className="relative flex items-center justify-center">
@@ -455,7 +473,7 @@ const SignUp: React.FC = () => {
                     />
                     {imagePreview ? (
                       <div className="relative w-full">
-                        <div className="relative mx-auto h-32 w-32 overflow-hidden rounded-full border-2 border-primary">
+                        <div className="relative mx-auto h-32 w-32 overflow-hidden rounded-full border-2 border-primary/70">
                           <Image
                             src={imagePreview}
                             alt="Profile preview"
@@ -468,7 +486,7 @@ const SignUp: React.FC = () => {
                           onClick={() =>
                             document.getElementById("fileInput")?.click()
                           }
-                          className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary bg-primary/10 py-2 text-xs text-primary transition hover:bg-primary/20"
+                          className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 py-2 text-xs font-semibold text-primary transition hover:bg-primary/20"
                         >
                           <CameraIcon size={16} />
                           <span>Change Picture</span>
@@ -479,10 +497,10 @@ const SignUp: React.FC = () => {
                         onClick={() =>
                           document.getElementById("fileInput")?.click()
                         }
-                        className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-stroke p-4 hover:border-primary"
+                        className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 p-4 transition hover:border-primary dark:border-white/10"
                       >
                         <CameraIcon size={20} />
-                        <span className="mt-2 text-xs text-gray-500">
+                        <span className="mt-2 text-xs text-slate-500">
                           Choose Picture
                         </span>
                       </div>
@@ -491,12 +509,12 @@ const SignUp: React.FC = () => {
                 </div>
 
                 {errors && (
-                  <div className="rounded-lg border border-red bg-red/10 p-2 text-xs text-red">
+                  <div className="rounded-xl border border-red/30 bg-red/10 p-2 text-xs text-red-600">
                     {errors}
                   </div>
                 )}
                 {success && (
-                  <div className="flex items-center gap-2 rounded-lg border border-green bg-green/10 p-2 text-xs text-green">
+                  <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-2 text-xs text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-500/10">
                     <CheckCircleIcon className="h-4 w-4" />
                     <span>{success}</span>
                   </div>
@@ -505,7 +523,7 @@ const SignUp: React.FC = () => {
                 <div className="pt-1">
                   <button
                     type="submit"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-sm text-white transition hover:bg-opacity-90"
+                    className="w-full cursor-pointer rounded-xl bg-gradient-to-r from-primary to-indigo-500 py-2.5 text-sm font-semibold text-white transition hover:from-primary/90 hover:to-indigo-500/90"
                     disabled={isLoading}
                   >
                     {isLoading ? (

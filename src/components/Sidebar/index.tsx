@@ -97,14 +97,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-[#0f1419] duration-300 ease-linear lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-x-hidden overflow-y-hidden border-r border-white/40 bg-white/60 backdrop-blur-2xl shadow-[0_30px_90px_-60px_rgba(15,23,42,0.45)] duration-300 ease-linear dark:border-white/10 dark:bg-slate-900/70 lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/25 via-sky-400/25 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-tr from-indigo-500/20 via-purple-500/20 to-transparent blur-3xl" />
+        </div>
         {/* Logo Section */}
-        <div className="flex items-center justify-between px-5 py-6 border-b border-gray-800/50">
+        <div className="relative z-10 flex items-center justify-between border-b border-white/40 px-5 py-6 dark:border-white/10">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-[#3C50E0] to-[#5B6CF0] shadow-lg shadow-blue-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#3C50E0] to-[#5B6CF0] shadow-lg shadow-blue-500/20">
               <Image
                 width={22}
                 height={22}
@@ -114,24 +118,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               />
             </div>
             <div>
-              <span className="text-lg font-semibold text-white tracking-tight">Gimzo</span>
-              <span className="block text-[10px] text-gray-500 font-medium tracking-wider">MOLECULAR RESEARCH</span>
+              <span className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+                Gimzo
+              </span>
+              <span className="block text-[10px] font-medium tracking-wider text-slate-500 dark:text-slate-400">
+                MOLECULAR RESEARCH
+              </span>
             </div>
           </Link>
 
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white lg:hidden"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-5 px-3 no-scrollbar">
+        <nav className="relative z-10 no-scrollbar flex-1 overflow-x-hidden overflow-y-auto px-3 py-5">
           {menuItems.map((group, groupIndex) => (
             <div key={groupIndex} className="mb-6">
-              <h3 className="px-3 mb-3 text-[10px] font-semibold text-gray-500 tracking-wider">
+              <h3 className="mb-3 px-3 text-[10px] font-semibold tracking-wider text-slate-400/80 dark:text-slate-500">
                 {group.section}
               </h3>
               <ul className="space-y-1">
@@ -141,18 +149,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     <li key={itemIndex}>
                       <Link
                         href={item.route}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group ${
+                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                           isActive
-                            ? "bg-gradient-to-r from-[#3C50E0]/20 to-[#3C50E0]/5 text-white border-l-2 border-[#3C50E0]"
-                            : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                            ? "border border-primary/20 bg-white/70 text-slate-900 shadow-sm ring-1 ring-primary/10 dark:bg-slate-800/70 dark:text-white"
+                            : "text-slate-600 hover:bg-white/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-white"
                         }`}
                       >
-                        <span className={`${isActive ? 'text-[#3C50E0]' : 'text-gray-500 group-hover:text-gray-300'} transition-colors`}>
+                        <span
+                          className={`transition-colors ${
+                            isActive
+                              ? "text-primary"
+                              : "text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-200"
+                          }`}
+                        >
                           {item.icon}
                         </span>
                         {item.label}
                         {isActive && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#3C50E0]" />
+                          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
                         )}
                       </Link>
                     </li>
@@ -164,20 +178,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         </nav>
 
         {/* Bottom Section - Pro Card */}
-        <div className="p-4 border-t border-gray-800/50">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-[#3C50E0]/10 to-transparent border border-[#3C50E0]/20">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-lg bg-[#3C50E0]/20 flex items-center justify-center">
+        <div className="relative z-10 border-t border-white/40 p-4 dark:border-white/10">
+          <div className="rounded-2xl border border-primary/20 bg-white/70 p-4 shadow-sm dark:bg-slate-900/70">
+            <div className="mb-2 flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/20">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M7 1L8.5 4.5L12 5L9.5 7.5L10 11L7 9.5L4 11L4.5 7.5L2 5L5.5 4.5L7 1Z" fill="#3C50E0"/>
                 </svg>
               </div>
-              <span className="text-xs font-semibold text-white">Gimzo Pro</span>
+              <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                Gimzo Pro
+              </span>
             </div>
-            <p className="text-[11px] text-gray-400 mb-3 leading-relaxed">
+            <p className="mb-3 text-[11px] leading-relaxed text-slate-500 dark:text-slate-300">
               Unlock advanced AI models & unlimited molecule generation
             </p>
-            <button className="w-full py-2 text-xs font-medium text-white bg-[#3C50E0] rounded-lg hover:bg-[#3C50E0]/90 transition-colors">
+            <button className="w-full rounded-xl bg-gradient-to-r from-primary to-indigo-500 py-2 text-xs font-semibold text-white transition-colors hover:from-primary/90 hover:to-indigo-500/90">
               Coming Soon
             </button>
           </div>

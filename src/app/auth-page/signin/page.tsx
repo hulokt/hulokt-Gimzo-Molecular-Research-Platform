@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { LoaderCircle, LockIcon, MailIcon } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import ComponentHeader from "@/components/ComponentHeader/ComponentHeader";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -60,21 +59,34 @@ const SignIn: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <ComponentHeader pageName="Sign In" />
+      <div className="relative flex h-[calc(100vh-40px)] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/30 via-indigo-500/30 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/30 via-sky-500/30 to-transparent blur-3xl" />
+        </div>
 
-      <div className="flex h-[calc(100vh-120px)] items-center justify-center overflow-hidden">
-        <div className="w-full max-w-md rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="w-full p-6">
-            <span className="mb-1 block text-sm font-medium">Start for free</span>
-            <h2 className="mb-4 text-xl font-bold text-black dark:text-white">
-              Sign In to Gimzo
+        <div className="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/70 p-6 shadow-[0_40px_120px_-60px_rgba(30,64,175,0.6)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/70">
+          <div className="mb-4 text-center">
+            <p className="text-xs font-medium uppercase tracking-[0.3em] text-slate-400">
+              Welcome back
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
+              Sign in to Gimzo
             </h2>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
+              Continue your research journey with a modern workspace.
+            </p>
+          </div>
 
-            {error && <div className="mb-3 text-sm text-red-500">{error}</div>}
+          {error && (
+            <div className="mb-3 rounded-xl border border-red/30 bg-red/10 p-2 text-sm text-red-600">
+              {error}
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="mb-1 block text-sm font-medium text-black dark:text-white">
+                <label className="mb-1 block text-sm font-medium text-slate-900 dark:text-white">
                   Email
                 </label>
                 <div className="relative">
@@ -83,18 +95,18 @@ const SignIn: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full rounded-lg border border-stroke bg-transparent py-2.5 pl-4 pr-10 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 py-2.5 pl-4 pr-10 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                     required
                     disabled={isLoading}
                   />
-                  <span className="absolute right-3 top-2.5">
+                  <span className="absolute right-3 top-2.5 text-slate-400">
                     <MailIcon size={18} />
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-black dark:text-white">
+                <label className="mb-1 block text-sm font-medium text-slate-900 dark:text-white">
                   Password
                 </label>
                 <div className="relative">
@@ -103,11 +115,11 @@ const SignIn: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full rounded-lg border border-stroke bg-transparent py-2.5 pl-4 pr-10 text-sm text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 py-2.5 pl-4 pr-10 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                     required
                     disabled={isLoading}
                   />
-                  <span className="absolute right-3 top-2.5">
+                  <span className="absolute right-3 top-2.5 text-slate-400">
                     <LockIcon size={18} />
                   </span>
                 </div>
@@ -116,7 +128,7 @@ const SignIn: React.FC = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-sm text-white transition hover:bg-opacity-90"
+                  className="w-full cursor-pointer rounded-xl bg-gradient-to-r from-primary to-indigo-500 py-2.5 text-sm font-semibold text-white transition hover:from-primary/90 hover:to-indigo-500/90"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -129,7 +141,7 @@ const SignIn: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-1 pt-2 text-center text-xs">
+              <div className="space-y-1 pt-2 text-center text-xs text-slate-500">
                 <p>
                   Don't have an account?{" "}
                   <Link href="/auth-page/signup" className="text-primary hover:underline">
@@ -143,7 +155,6 @@ const SignIn: React.FC = () => {
                 </p>
               </div>
             </form>
-          </div>
         </div>
       </div>
     </DefaultLayout>

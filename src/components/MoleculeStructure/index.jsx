@@ -22,7 +22,10 @@ const initRDKit = (() => {
       
       // Create new loading promise
       rdkitLoadingPromise = new Promise((resolve, reject) => {
-        initRDKitModule()
+        initRDKitModule({
+          locateFile: (file) =>
+            `https://unpkg.com/@rdkit/rdkit@2023.9.2-1.0.0/dist/${file}`,
+        })
           .then((RDKit) => {
             rdkitInstance = RDKit;
             rdkitLoadingPromise = null;
@@ -43,6 +46,10 @@ const initRDKit = (() => {
     }
   };
 })();
+
+export const preloadRDKit = () => {
+  return initRDKit.load().catch(() => null);
+};
 
 class MoleculeStructure extends Component {
   static propTypes = {

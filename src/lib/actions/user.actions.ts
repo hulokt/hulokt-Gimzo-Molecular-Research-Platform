@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
-import { handleError } from "../utils";
 import { sendVerificationEmail, sendResetPasswordEmail } from "./email.actions";
 
 export async function createUser(user: CreateUserParams) {
@@ -13,7 +12,10 @@ export async function createUser(user: CreateUserParams) {
 
     const existingUser = await User.findOne({ email: user.email });
     if (existingUser) {
-      throw new Error("User already exists with this email");
+      return {
+        user: null,
+        error: "User already exists with this email",
+      };
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -42,13 +44,18 @@ export async function createUser(user: CreateUserParams) {
       // Continue with successful registration even if email fails
     }
 
-    return JSON.parse(JSON.stringify(newUser));
+    return {
+      user: JSON.parse(JSON.stringify(newUser)),
+      error: null,
+    };
   } catch (error: any) {
-    console.log(error);
-    handleError(error);
-    throw new Error(
-      error.message || "An error occurred during user registration",
-    );
+    console.error(error);
+    return {
+      user: null,
+      error:
+        error?.message ||
+        "An error occurred during user registration. Please try again.",
+    };
   }
 }
 

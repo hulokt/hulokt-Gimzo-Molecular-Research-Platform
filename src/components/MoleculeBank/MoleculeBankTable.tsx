@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import MoleculeStructure from "../MoleculeStructure/index";
+import MoleculeStructure, { preloadRDKit } from "../MoleculeStructure/index";
 import bank from "@/data/moleculeBank.json";
 
 
@@ -35,6 +35,11 @@ const TableOne = () => {
     return filteredMolecules.slice(start, start + pageSize);
   }, [filteredMolecules, pageSafe]);
 
+  // Preload RDKit once to avoid delayed renders
+  useEffect(() => {
+    preloadRDKit();
+  }, []);
+
   // Restore scroll and page from session when navigating back from research
   useEffect(() => {
     try {
@@ -54,26 +59,31 @@ const TableOne = () => {
   }, []);
 
   return (
-    <div className="rounded-lg border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-[#181818] dark:bg-[#181818] sm:px-7.5 xl:pb-1 max-h-[80vh] flex flex-col overflow-hidden">
-      <div className="mb-4">
-        <h4 className="text-xl font-semibold text-black dark:text-white">
-        Molecules
-      </h4>
+    <div className="flex max-h-[70vh] flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 px-5 pb-2.5 pt-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80 sm:px-7.5 xl:pb-1">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h4 className="text-xl font-semibold text-slate-900 dark:text-white">
+            Molecules
+          </h4>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400 dark:text-slate-300">
+            Library overview
+          </p>
+        </div>
       </div>
 
-      <div className="sticky top-0 z-20 -mx-5 sm:-mx-7.5 px-5 sm:px-7.5 pb-4 bg-white dark:bg-[#181818]">
-      <input
-        type="search"
+      <div className="sticky top-0 z-20 -mx-5 bg-white/80 px-5 pb-4 backdrop-blur-sm dark:bg-[#111827]/80 sm:-mx-7.5 sm:px-7.5">
+        <input
+          type="search"
           placeholder="Search molecule name, weight, or category"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-          className="border-gray-300 text-gray-700 placeholder-gray-400 dark:border-gray-600 dark:placeholder-gray-500 text-md w-full rounded-lg border bg-white px-4 py-3 shadow-sm outline-none focus:border-primary focus:ring-primary dark:bg-[#181818] dark:text-white"
-      />
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:placeholder:text-slate-400"
+        />
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
       <div className="flex flex-col">
-        <div className="grid grid-cols-4 rounded-lg bg-gray-2 dark:bg-[#121212] sm:grid-cols-5">
+        <div className="grid grid-cols-4 rounded-2xl border border-slate-200/70 bg-gradient-to-r from-slate-50 via-white to-slate-100 text-slate-700 dark:border-white/10 dark:from-slate-900/70 dark:via-slate-900/50 dark:to-slate-800/70 dark:text-slate-200 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Molecule name
@@ -103,15 +113,15 @@ const TableOne = () => {
 
         {pageItems.map((molecule, idx) => (
           <div
-            className={`grid grid-cols-4 sm:grid-cols-5 ${
+            className={`grid grid-cols-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/60 sm:grid-cols-5 ${
               idx === pageItems.length - 1
                 ? ""
-                : "border-b border-stroke dark:border-strokedark"
+                : "border-b border-slate-200/70 dark:border-white/10"
             }`}
             key={`${pageSafe}-${idx}-${molecule.moleculeName}`}
           >
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">
+              <p className="text-slate-900 dark:text-white">
                 {molecule.moleculeName}
               </p>
             </div>
@@ -128,13 +138,13 @@ const TableOne = () => {
             </div>
 
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">
+              <p className="text-slate-900 dark:text-white">
                 {molecule.molecularWeight}
               </p>
             </div>
 
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">
+              <p className="text-slate-900 dark:text-white">
                 {molecule.categoryUsage}
               </p>
             </div>
@@ -153,7 +163,7 @@ const TableOne = () => {
                     );
                   } catch {}
                 }}
-                className="rounded border px-3 py-1 text-sm text-black dark:text-white dark:border-strokedark hover:bg-gray-100 dark:hover:bg-[#222]"
+                className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-3 py-1.5 text-xs font-semibold text-white transition-all hover:from-primary hover:to-indigo-500"
               >
                 Research
               </Link>
@@ -163,14 +173,14 @@ const TableOne = () => {
         </div>
       </div>
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between py-3 border-t border-stroke dark:border-strokedark">
-        <div className="text-sm text-black dark:text-white">
+      <div className="flex items-center justify-between border-t border-slate-200/70 py-3 dark:border-white/10">
+        <div className="text-sm text-slate-600 dark:text-slate-300">
           {filteredMolecules.length} items
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="rounded border px-3 py-1 text-sm text-black dark:text-white dark:border-strokedark hover:bg-gray-100 dark:hover:bg-[#222] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg border border-slate-200 px-3 py-1 text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-slate-800"
             disabled={pageSafe === 1}
           >
             Prev
@@ -234,7 +244,7 @@ const TableOne = () => {
               return pages.map((pageNum, idx) => {
                 if (pageNum === "...") {
                   return (
-                    <span key={`ellipsis-${idx}`} className="px-2 text-black dark:text-white">
+                    <span key={`ellipsis-${idx}`} className="px-2 text-slate-500 dark:text-slate-300">
                       ...
                     </span>
                   );
@@ -245,10 +255,10 @@ const TableOne = () => {
                   <button
                     key={pageNum}
                     onClick={() => setPage(pageNum as number)}
-                    className={`min-w-[32px] rounded border px-2 py-1 text-sm transition-colors ${
+                    className={`min-w-[32px] rounded-lg border px-2 py-1 text-sm transition-colors ${
                       isActive
-                        ? "bg-primary text-white border-primary"
-                        : "text-black dark:text-white dark:border-strokedark hover:bg-gray-100 dark:hover:bg-[#222]"
+                        ? "border-primary bg-gradient-to-r from-primary to-indigo-500 text-white shadow-sm"
+                        : "border-slate-200 text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-slate-800"
                     }`}
                   >
                     {pageNum}
@@ -260,7 +270,7 @@ const TableOne = () => {
           
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="rounded border px-3 py-1 text-sm text-black dark:text-white dark:border-strokedark hover:bg-gray-100 dark:hover:bg-[#222] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg border border-slate-200 px-3 py-1 text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-slate-800"
             disabled={pageSafe === totalPages}
           >
             Next

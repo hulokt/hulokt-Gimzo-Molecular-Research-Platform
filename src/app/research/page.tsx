@@ -595,23 +595,40 @@ export default function PubChem() {
   if (isGeneratedMolecule && incomingStructure) {
     return (
       <DefaultLayout>
-        <div className="container mx-auto min-h-screen p-0">
-          <div className="mb-6 flex flex-col items-center gap-3 md:flex-row md:justify-between">
+        <div className="mx-auto min-h-full w-full space-y-6">
+          <div className="relative mt-4 overflow-hidden rounded-3xl border border-white/30 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 p-6 text-white shadow-[0_40px_120px_-60px_rgba(30,64,175,0.9)]">
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/40 via-indigo-500/40 to-transparent blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-500/40 to-transparent blur-3xl" />
+            <div className="relative z-10 flex flex-col gap-2">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+                Molecule Research
+              </p>
+              <h2 className="text-2xl font-semibold sm:text-3xl">
+                Deep insights for generated structures
+              </h2>
+              <p className="max-w-2xl text-sm text-white/80">
+                Review molecular properties, export reports, and keep your
+                research organized in a modern workspace.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between">
             <div className="flex w-full items-center gap-3 md:w-auto">
               <button
                 onClick={() => router.back()}
                 aria-label="Go back"
-                className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="rounded-xl border border-white/40 bg-white/70 p-2 text-slate-700 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/90"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <h2 className="text-xl font-semibold text-black dark:text-white">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Molecule Research
               </h2>
             </div>
             <button
               onClick={downloadGeneratedReport}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-primary/90 hover:to-indigo-500/90"
               aria-label="Download Report"
             >
               <Download className="h-4 w-4" />
@@ -628,11 +645,11 @@ export default function PubChem() {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Structure Card */}
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-[#1a1a1a]">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
                 Molecular Structure
               </h3>
-              <div className="flex items-center justify-center rounded-lg bg-gray-50 p-4 dark:bg-gray-800/50">
+              <div className="flex items-center justify-center rounded-xl bg-slate-50/80 p-4 dark:bg-slate-900/60">
                 <MoleculeStructure
                   key={incomingStructure}
                   id="research-canonical-canvas"
@@ -644,22 +661,22 @@ export default function PubChem() {
             </div>
 
             {/* Info Card */}
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-[#1a1a1a]">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
                 SMILES String
               </h3>
-              <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800/50">
+              <div className="rounded-xl bg-slate-50/80 p-4 dark:bg-slate-900/60">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-500">Canonical SMILES</span>
+                  <span className="text-xs font-medium text-slate-500">Canonical SMILES</span>
                   <button
                     onClick={() => copyToClipboard(incomingStructure)}
-                    className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                    className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80"
                   >
                     {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     {copied ? "Copied" : "Copy"}
                   </button>
                 </div>
-                <code className="block break-all font-mono text-sm text-gray-800 dark:text-gray-200">
+                <code className="block break-all font-mono text-sm text-slate-800 dark:text-slate-200">
                   {incomingStructure}
                 </code>
               </div>
@@ -680,33 +697,33 @@ export default function PubChem() {
                   </div>
                 ) : compoundData ? (
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">Formula</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.MolecularFormula || "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">Formula</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.MolecularFormula || "—"}</div>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">Weight</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.MolecularWeight ? `${compoundData.MolecularWeight} g/mol` : "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">Weight</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.MolecularWeight ? `${compoundData.MolecularWeight} g/mol` : "—"}</div>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">XLogP</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.XLogP ?? "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">XLogP</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.XLogP ?? "—"}</div>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">TPSA</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.TPSA ? `${compoundData.TPSA} Ų` : "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">TPSA</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.TPSA ? `${compoundData.TPSA} Ų` : "—"}</div>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">H-Donors</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.HBondDonorCount ?? "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">H-Donors</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.HBondDonorCount ?? "—"}</div>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                      <div className="text-xs text-gray-500">H-Acceptors</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{compoundData.HBondAcceptorCount ?? "—"}</div>
+                    <div className="rounded-xl bg-slate-50/80 p-3 dark:bg-slate-900/60">
+                      <div className="text-xs text-slate-500">H-Acceptors</div>
+                      <div className="font-medium text-slate-900 dark:text-white">{compoundData.HBondAcceptorCount ?? "—"}</div>
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border-2 border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
                     <div className="flex items-start gap-3">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-200 dark:bg-amber-800">
                         <svg className="h-4 w-4 text-amber-700 dark:text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -727,8 +744,8 @@ export default function PubChem() {
           </div>
 
           {/* Additional Properties section - with notice if not available */}
-          <div className="mt-6 rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-[#1a1a1a]">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          <div className="mt-6 rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
               Additional Properties
             </h3>
             {loadingSmiles ? (
@@ -772,7 +789,7 @@ export default function PubChem() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-lg border-2 border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
                 <div className="flex items-start gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-200 dark:bg-amber-800">
                     <svg className="h-4 w-4 text-amber-700 dark:text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -796,19 +813,36 @@ export default function PubChem() {
 
   return (
     <DefaultLayout>
-      <div className="container mx-auto min-h-screen p-0">
-        <div className="mb-6 flex flex-col items-center gap-3 md:flex-row md:justify-between">
+      <div className="mx-auto min-h-full w-full space-y-6">
+        <div className="relative mt-4 overflow-hidden rounded-3xl border border-white/30 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 p-6 text-white shadow-[0_40px_120px_-60px_rgba(30,64,175,0.9)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/40 via-indigo-500/40 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-500/40 to-transparent blur-3xl" />
+          <div className="relative z-10 flex flex-col gap-2">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+              Compound Research
+            </p>
+            <h2 className="text-2xl font-semibold sm:text-3xl">
+              Search and analyze molecular properties
+            </h2>
+            <p className="max-w-2xl text-sm text-white/80">
+              Find compounds from PubChem, explore structural data, and export
+              reports with a modern workflow.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between">
           <div className="flex w-full items-center gap-3 md:w-auto">
             {canGoBackToBank && (
               <button
                 onClick={() => router.back()}
                 aria-label="Go back to Molecule Bank"
-                className="rounded p-2 hover:bg-gray-100 dark:hover:bg-[#1e1e1e]"
+                className="rounded-xl border border-white/40 bg-white/70 p-2 text-slate-700 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/90"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
             )}
-            <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+            <h2 className="text-title-md2 font-semibold text-slate-900 dark:text-white">
               Compound Search
             </h2>
           </div>
@@ -816,7 +850,7 @@ export default function PubChem() {
             {compoundData && (
               <button
                 onClick={downloadReport}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-indigo-500 px-4 py-2 text-white shadow-sm transition hover:from-primary/90 hover:to-indigo-500/90"
                 aria-label="Download Report"
               >
                 <Download className="h-5 w-5" />
@@ -839,16 +873,16 @@ export default function PubChem() {
                     }
                     setShowSuggestions(true);
                   }}
-                  className="w-full rounded-lg border border-gray-300 bg-white p-3 pl-10 pr-10 text-lg shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-[#1e1e1e] dark:text-white md:w-96"
+                  className="w-full rounded-xl border border-slate-200 bg-white/90 p-3 pl-10 pr-10 text-base text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white md:w-96"
                   placeholder="Search molecules..."
                 />
                 <span className="absolute inset-y-0 left-3 flex items-center">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-slate-400" />
                 </span>
                 {compoundName && (
                   <button
                     onClick={clearSearch}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -859,10 +893,10 @@ export default function PubChem() {
               {showSuggestions && suggestions.length > 0 && (
                 <div
                   ref={suggestionsRef}
-                  className="absolute z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-[#1e1e1e]"
+                  className="absolute z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900/90"
                 >
                   <div className="p-2">
-                    <div className="mb-2 flex items-center gap-2 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                    <div className="mb-2 flex items-center gap-2 px-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                       <Sparkles className="h-3 w-3" />
                       Suggestions from Molecule Bank
                     </div>
@@ -872,14 +906,14 @@ export default function PubChem() {
                         onClick={() => handleSuggestionClick(suggestion)}
                         className={`flex w-full flex-col rounded-lg px-3 py-2 text-left transition-colors ${
                           index === selectedIndex
-                            ? "bg-blue-100 dark:bg-blue-900/30"
-                            : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                            ? "bg-primary/10"
+                            : "hover:bg-slate-100 dark:hover:bg-slate-800"
                         }`}
                       >
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="font-medium text-slate-900 dark:text-white">
                           {suggestion.moleculeName}
                         </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
                           {suggestion.categoryUsage} • MW: {suggestion.molecularWeight} g/mol
                         </span>
                       </button>
@@ -892,9 +926,9 @@ export default function PubChem() {
               {showSuggestions && compoundName.trim() && suggestions.length === 0 && !loading && (
                 <div
                   ref={suggestionsRef}
-                  className="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white p-4 text-center shadow-xl dark:border-gray-700 dark:bg-[#1e1e1e]"
+                  className="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white p-4 text-center shadow-xl dark:border-white/10 dark:bg-slate-900/90"
                 >
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     No matches in local bank. Press Enter to search PubChem.
                   </p>
                 </div>
@@ -924,9 +958,9 @@ export default function PubChem() {
             </div>
             <button
               onClick={handleResearchRandom}
-              className="group relative inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:shadow-xl active:scale-[0.99]"
+              className="group relative inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary via-indigo-500 to-sky-500 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-primary/90 hover:via-indigo-500/90 hover:to-sky-500/90 hover:shadow-xl active:scale-[0.99]"
             >
-              <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-40 blur-lg transition-opacity group-hover:opacity-60"></span>
+              <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-primary via-indigo-500 to-sky-500 opacity-40 blur-lg transition-opacity group-hover:opacity-60"></span>
               <Sparkles className="relative h-5 w-5" />
               <span className="relative">Research Random Molecule</span>
             </button>
@@ -941,8 +975,8 @@ export default function PubChem() {
 
         {compoundData && (
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-3 rounded-lg bg-white p-6 shadow-md dark:bg-[#181818]">
-              <h2 className="mb-4 text-xl font-semibold text-black dark:text-white">
+            <div className="space-y-3 rounded-2xl border border-slate-200/70 bg-white/80 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+              <h2 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
                 Basic Information
               </h2>
               <p>
@@ -1000,8 +1034,8 @@ export default function PubChem() {
               </p>
             </div>
 
-            <div className="space-y-3 rounded-lg bg-white p-6 shadow-md dark:bg-[#181818]">
-              <h2 className="mb-4 text-xl font-semibold text-black dark:text-white">
+            <div className="space-y-3 rounded-2xl border border-slate-200/70 bg-white/80 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+              <h2 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
                 Physical Properties
               </h2>
               <p>
@@ -1042,8 +1076,8 @@ export default function PubChem() {
               </p>
             </div>
 
-            <div className="space-y-3 rounded-lg bg-white p-6 shadow-md md:col-span-2 dark:bg-[#181818]">
-              <h2 className="mb-4 text-xl font-semibold text-black dark:text-white">
+            <div className="space-y-3 rounded-2xl border border-slate-200/70 bg-white/80 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm md:col-span-2 dark:border-white/10 dark:bg-[#111827]/80">
+              <h2 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
                 Additional Information
               </h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

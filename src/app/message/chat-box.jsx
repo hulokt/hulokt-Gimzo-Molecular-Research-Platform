@@ -113,6 +113,7 @@ function ChatBox() {
   const [confirmData, setConfirmData] = useState(null);
   
   const bottomRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const fileInputRef = useRef(null);
   const channelName = "gimzo-chat";
   const groupUpdatesChannelName = "gimzo-group-updates";
@@ -316,8 +317,9 @@ function ChatBox() {
   const isAdmin = getUserRole() === "admin" || isOwner;
 
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -897,17 +899,21 @@ function ChatBox() {
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
       
-      <div className="h-[calc(100vh-140px)] overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1a1a1a]">
-        <div className="flex h-full">
+      <div className="relative h-full min-h-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-60px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/20 via-indigo-500/20 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/20 via-sky-500/20 to-transparent blur-3xl" />
+        </div>
+        <div className="relative z-10 flex h-full">
           {/* Sidebar */}
-          <div className="w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-800">
-            <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Messages</h2>
+          <div className="w-80 flex-shrink-0 border-r border-white/40 bg-white/70 backdrop-blur dark:border-white/10 dark:bg-slate-900/70">
+            <div className="flex items-center justify-between border-b border-white/40 p-4 dark:border-white/10">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Messages</h2>
               <div className="flex gap-2">
                 {pendingInvites.length > 0 && (
                   <button
                     onClick={() => setShowMyInvites(true)}
-                    className="relative rounded-lg p-2 text-green-500 transition-colors hover:bg-green-50 dark:hover:bg-green-900/20"
+                    className="relative rounded-xl p-2 text-emerald-500 transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                     title="Pending invites"
                   >
                     <Mail className="h-5 w-5" />
@@ -919,7 +925,7 @@ function ChatBox() {
                 {pendingRequests.length > 0 && (
                   <button
                     onClick={() => setShowPendingRequests(true)}
-                    className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="relative rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
                     title="Join requests"
                   >
                     <Bell className="h-5 w-5" />
@@ -930,14 +936,14 @@ function ChatBox() {
                 )}
                 <button
                   onClick={() => setShowJoinGroup(true)}
-                  className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
                   title="Join a group"
                 >
                   <LogIn className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => setShowCreateGroup(true)}
-                  className="rounded-lg bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700"
+                  className="rounded-xl bg-gradient-to-r from-primary to-indigo-500 p-2 text-white transition-colors hover:from-primary/90 hover:to-indigo-500/90"
                   title="Create new group"
                 >
                   <Plus className="h-5 w-5" />
@@ -945,7 +951,7 @@ function ChatBox() {
               </div>
             </div>
 
-            <div className="h-[calc(100%-65px)] overflow-y-auto p-2">
+            <div className="h-[calc(100%-65px)] overflow-y-auto p-3">
               {myGroups.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center p-4 text-center">
                   <Users className="mb-3 h-12 w-12 text-gray-300 dark:text-gray-600" />
@@ -962,14 +968,14 @@ function ChatBox() {
                       <div
                         key={group._id}
                         onClick={() => handleSelectGroup(group)}
-                        className={`w-full cursor-pointer rounded-lg p-3 text-left transition-colors ${
+                        className={`w-full cursor-pointer rounded-xl p-3 text-left transition-colors ${
                           currentGroup?._id === group._id
-                            ? "bg-blue-50 dark:bg-blue-900/20"
-                            : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                            ? "bg-primary/10"
+                            : "hover:bg-white/70 dark:hover:bg-slate-800"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-bold text-white">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-indigo-500 text-sm font-bold text-white shadow-sm">
                             {group.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex-1 overflow-hidden">
@@ -1014,7 +1020,7 @@ function ChatBox() {
             {currentGroup ? (
               <>
                 {/* Chat Header */}
-                <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
+                <div className="flex items-center justify-between border-b border-white/40 p-4 dark:border-white/10">
                   <div className="flex-1">
                     {editingGroupName ? (
                       <div className="flex items-center gap-2">
@@ -1022,7 +1028,7 @@ function ChatBox() {
                           type="text"
                           value={newGroupNameInput}
                           onChange={(e) => setNewGroupNameInput(e.target.value)}
-                          className="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-white"
+                          className="rounded-xl border border-slate-200 bg-white/90 px-3 py-1.5 text-sm text-slate-900 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                           placeholder="New name"
                         />
                         <button onClick={handleRenameGroup} className="text-green-500 hover:text-green-600">
@@ -1034,22 +1040,22 @@ function ChatBox() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{currentGroup.name}</h3>
+                        <h3 className="font-semibold text-slate-900 dark:text-white">{currentGroup.name}</h3>
                         {isOwner && (
                           <button
                             onClick={() => { setEditingGroupName(true); setNewGroupNameInput(currentGroup.name); }}
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-slate-400 hover:text-slate-600"
                           >
                             <Edit3 className="h-3 w-3" />
                           </button>
                         )}
                       </div>
                     )}
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-slate-500">
                       {currentGroup.members.length} member{currentGroup.members.length !== 1 ? "s" : ""}
                     </p>
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-gray-400">
+                      <span className="text-[10px] font-mono text-slate-400">
                         ID: {currentGroup.groupId || "—"}
                       </span>
                       {currentGroup.groupId && (
@@ -1058,7 +1064,7 @@ function ChatBox() {
                             navigator.clipboard.writeText(currentGroup.groupId);
                             showToast("ID copied!", "success");
                           }}
-                          className="flex items-center gap-1 text-[10px] text-blue-500 hover:text-blue-600"
+                          className="flex items-center gap-1 text-[10px] text-primary hover:text-primary/80"
                         >
                           <Copy className="h-3 w-3" /> Copy
                         </button>
@@ -1069,7 +1075,7 @@ function ChatBox() {
                     {isAdmin && (
                       <button
                         onClick={() => setShowInviteUser(true)}
-                        className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                         title="Invite user"
                       >
                         <UserPlus className="h-5 w-5" />
@@ -1077,7 +1083,7 @@ function ChatBox() {
                     )}
                     <button
                       onClick={() => setShowGroupSettings(true)}
-                      className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                       title="Group settings"
                     >
                       <Settings className="h-5 w-5" />
@@ -1086,7 +1092,7 @@ function ChatBox() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4" ref={messagesContainerRef}>
                   {messages.length === 0 ? (
                     <div className="flex h-full flex-col items-center justify-center text-center">
                       <Send className="mb-3 h-8 w-8 text-gray-300" />
@@ -1113,10 +1119,10 @@ function ChatBox() {
                               <div
                                 className={`inline-block rounded-2xl px-4 py-2 ${
                                   msg.isDeleted
-                                    ? "bg-gray-100 italic text-gray-500 dark:bg-gray-700"
+                                    ? "bg-slate-100 italic text-slate-500 dark:bg-slate-700"
                                     : isMe
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
+                                    ? "bg-gradient-to-r from-primary to-indigo-500 text-white shadow-sm"
+                                    : "border border-slate-200/70 bg-white/80 text-slate-900 shadow-sm dark:border-white/10 dark:bg-slate-800/70 dark:text-white"
                                 }`}
                               >
                                 {msg.text}
@@ -1181,19 +1187,19 @@ function ChatBox() {
                 )}
 
                 {/* Message Input */}
-                <form onSubmit={sendMessage} className="border-t border-gray-200 p-4 dark:border-gray-800">
+                <form onSubmit={sendMessage} className="border-t border-white/40 p-4 dark:border-white/10">
                   <div className="flex gap-3">
                     <input
                       type="text"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       placeholder="Type a message..."
-                      className="flex-1 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-white"
+                      className="flex-1 rounded-full border border-slate-200 bg-white/90 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white"
                     />
                     <button
                       type="submit"
                       disabled={!messageText.trim()}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-indigo-500 text-white shadow-sm transition hover:from-primary/90 hover:to-indigo-500/90 disabled:opacity-50"
                     >
                       <Send className="h-5 w-5" />
                     </button>

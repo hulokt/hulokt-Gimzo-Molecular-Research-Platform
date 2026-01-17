@@ -1,5 +1,4 @@
 "use client";
-import Breadcrumb from "@/components/ComponentHeader/ComponentHeader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import MoleculeStructure from "../../components/MoleculeStructure/index";
 import React, { useState, useEffect, useCallback } from "react";
@@ -314,41 +313,58 @@ const ModalLayout = () => {
   const skeletonCount = parseInt(numMolecules) || 10;
 
   // Input class for consistent styling - light background in both modes
-  const inputClass = "w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-white dark:placeholder:text-gray-500";
+  const inputClass =
+    "w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:placeholder:text-slate-400";
 
   return (
     <DefaultLayout>
-      <div className="container mx-auto min-h-screen p-0">
-        <Breadcrumb pageName="Molecule Generation" />
+      <div className="container mx-auto min-h-full w-full p-0">
+
+        <div className="relative mb-6 mt-4 overflow-hidden rounded-3xl border border-white/30 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 p-6 text-white shadow-[0_40px_120px_-60px_rgba(30,64,175,0.9)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-primary/40 via-indigo-500/40 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-500/40 to-transparent blur-3xl" />
+          <div className="relative z-10 flex flex-col gap-2">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+              AI Molecule Studio
+            </p>
+            <h2 className="text-2xl font-semibold sm:text-3xl">
+              Generate, merge, and explore molecular structures
+            </h2>
+            <p className="max-w-2xl text-sm text-white/80">
+              Combine molecules, tune AI presets, and launch research workflows
+              in a modern workspace.
+            </p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="flex flex-col gap-5 lg:col-span-2">
             
             {/* Molecule Combination Tool - removed overflow-hidden */}
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-[#1f1f1f]">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/80 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
               <button
                 onClick={() => setShowMerger(!showMerger)}
-                className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
               >
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                  <h3 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">
                     Molecule Combination
                   </h3>
-                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Combine two molecules to create a new structure
                   </p>
                 </div>
-                <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-200">
                   {showMerger ? "Hide" : "Show"}
                 </span>
               </button>
 
               {showMerger && (
-                <div className="border-t border-gray-100 p-5 dark:border-gray-800">
+                <div className="border-t border-slate-200/70 p-5 dark:border-white/10">
                   <div className="grid gap-5 md:grid-cols-2">
                     {/* Molecule 1 */}
                     <div>
-                      <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         First Molecule
                       </label>
                       <div className="relative">
@@ -366,13 +382,13 @@ const ModalLayout = () => {
                         <button
                           type="button"
                           onClick={() => pickRandomMolecule(setMolecule1)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
                         >
                           Random
                         </button>
                         
                         {showSearch1 && search1 && (
-                          <div className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-[#2a2a2a]">
+                          <div className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900/90">
                             {filterMolecules(search1).map((mol, idx) => (
                               <button
                                 key={idx}
@@ -381,24 +397,34 @@ const ModalLayout = () => {
                                   setSearch1(mol.moleculeName);
                                   setShowSearch1(false);
                                 }}
-                                className="w-full px-3 py-2.5 text-left text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+                                className="w-full px-3 py-2.5 text-left text-sm transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                               >
-                                <div className="font-medium text-gray-900 dark:text-white">{mol.moleculeName}</div>
-                                <div className="text-xs text-gray-500">{mol.categoryUsage}</div>
+                                <div className="font-medium text-slate-900 dark:text-white">
+                                  {mol.moleculeName}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                  {mol.categoryUsage}
+                                </div>
                               </button>
                             ))}
                             {filterMolecules(search1).length === 0 && (
-                              <div className="px-3 py-2 text-sm text-gray-500">No results</div>
+                              <div className="px-3 py-2 text-sm text-slate-500">
+                                No results
+                              </div>
                             )}
                           </div>
                         )}
                       </div>
                       
                       {molecule1 && (
-                        <div className="mt-3 rounded-lg bg-gray-50 p-3 dark:bg-[#252525]">
+                        <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-900/60">
                           <div className="mb-2 flex items-center justify-between text-xs">
-                            <span className="font-semibold text-gray-900 dark:text-white">{molecule1.moleculeName}</span>
-                            <span className="text-gray-500">{molecule1.molecularWeight} g/mol</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">
+                              {molecule1.moleculeName}
+                            </span>
+                            <span className="text-slate-500">
+                              {molecule1.molecularWeight} g/mol
+                            </span>
                           </div>
                           <MoleculeStructure
                             id="merger-mol-1"
@@ -412,7 +438,7 @@ const ModalLayout = () => {
 
                     {/* Molecule 2 */}
                     <div>
-                      <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Second Molecule
                       </label>
                       <div className="relative">
@@ -430,13 +456,13 @@ const ModalLayout = () => {
                         <button
                           type="button"
                           onClick={() => pickRandomMolecule(setMolecule2)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
                         >
                           Random
                         </button>
                         
                         {showSearch2 && search2 && (
-                          <div className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-[#2a2a2a]">
+                          <div className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900/90">
                             {filterMolecules(search2).map((mol, idx) => (
                               <button
                                 key={idx}
@@ -445,24 +471,34 @@ const ModalLayout = () => {
                                   setSearch2(mol.moleculeName);
                                   setShowSearch2(false);
                                 }}
-                                className="w-full px-3 py-2.5 text-left text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+                                className="w-full px-3 py-2.5 text-left text-sm transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                               >
-                                <div className="font-medium text-gray-900 dark:text-white">{mol.moleculeName}</div>
-                                <div className="text-xs text-gray-500">{mol.categoryUsage}</div>
+                                <div className="font-medium text-slate-900 dark:text-white">
+                                  {mol.moleculeName}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                  {mol.categoryUsage}
+                                </div>
                               </button>
                             ))}
                             {filterMolecules(search2).length === 0 && (
-                              <div className="px-3 py-2 text-sm text-gray-500">No results</div>
+                              <div className="px-3 py-2 text-sm text-slate-500">
+                                No results
+                              </div>
                             )}
                           </div>
                         )}
                       </div>
                       
                       {molecule2 && (
-                        <div className="mt-3 rounded-lg bg-gray-50 p-3 dark:bg-[#252525]">
+                        <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-900/60">
                           <div className="mb-2 flex items-center justify-between text-xs">
-                            <span className="font-semibold text-gray-900 dark:text-white">{molecule2.moleculeName}</span>
-                            <span className="text-gray-500">{molecule2.molecularWeight} g/mol</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">
+                              {molecule2.moleculeName}
+                            </span>
+                            <span className="text-slate-500">
+                              {molecule2.molecularWeight} g/mol
+                            </span>
                           </div>
                           <MoleculeStructure
                             id="merger-mol-2"
@@ -477,7 +513,7 @@ const ModalLayout = () => {
 
                   {/* Combination Method */}
                   <div className="mt-5">
-                    <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       Method
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -490,10 +526,10 @@ const ModalLayout = () => {
                           key={type.key}
                           type="button"
                           onClick={() => setMergeType(type.key as any)}
-                          className={`rounded-lg border px-3 py-2.5 text-center text-sm transition-all ${
+                          className={`rounded-xl border px-3 py-2.5 text-center text-sm transition-all ${
                             mergeType === type.key
-                              ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                              : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
                           }`}
                         >
                           <div className="font-medium">{type.name}</div>
@@ -505,26 +541,26 @@ const ModalLayout = () => {
 
                   {/* Result */}
                   {mergedSmiles && (
-                    <div className="mt-5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
+                    <div className="mt-5 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 to-indigo-500/10 p-4">
                       <div className="mb-2 flex items-center justify-between">
-                        <span className="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                        <span className="text-xs font-medium uppercase tracking-wide text-primary">
                           Combined SMILES
                         </span>
                         <button
                           type="button"
                           onClick={() => copyToClipboard(mergedSmiles)}
-                          className="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                          className="text-xs font-medium text-primary hover:text-primary/80"
                         >
                           {copied === "main" ? "Copied!" : "Copy"}
                         </button>
                       </div>
-                      <code className="block break-all rounded-md bg-white/80 p-2 font-mono text-xs text-gray-800 dark:bg-[#1a1a1a] dark:text-gray-200">
+                      <code className="block break-all rounded-xl bg-white/80 p-2 font-mono text-xs text-slate-800 dark:bg-slate-900/80 dark:text-slate-200">
                         {mergedSmiles}
                       </code>
                       <button
                         type="button"
                         onClick={useMergedSmiles}
-                        className="mt-3 w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                        className="mt-3 w-full rounded-xl bg-gradient-to-r from-primary to-indigo-500 py-2.5 text-sm font-semibold text-white transition-colors hover:from-primary/90 hover:to-indigo-500/90"
                       >
                         Use in Generator
                       </button>
@@ -535,29 +571,29 @@ const ModalLayout = () => {
             </div>
 
             {/* Generator - removed overflow-hidden */}
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-[#1f1f1f]">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/80 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
               <button
                 onClick={() => setShowGenerator(!showGenerator)}
-                className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
               >
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                  <h3 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">
                     SMILES Generator
                   </h3>
-                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Generate novel molecular structures
                   </p>
                 </div>
-                <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-200">
                   {showGenerator ? "Hide" : "Show"}
                 </span>
               </button>
 
               {showGenerator && (
-              <form onSubmit={handleSubmit} className="border-t border-gray-100 p-5 dark:border-gray-800">
+              <form onSubmit={handleSubmit} className="border-t border-slate-200/70 p-5 dark:border-white/10">
                 {/* Presets */}
                 <div className="mb-5">
-                  <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Preset
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -566,16 +602,24 @@ const ModalLayout = () => {
                         key={key}
                         type="button"
                         onClick={() => applyPreset(key)}
-                        className={`rounded-lg border px-3 py-2.5 text-center transition-all ${
+                        className={`rounded-xl border px-3 py-2.5 text-center transition-all ${
                           activePreset === key
-                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
+                            ? "border-primary bg-primary/10"
+                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:hover:bg-slate-800"
                         }`}
                       >
-                        <div className={`text-sm font-semibold ${activePreset === key ? "text-blue-700 dark:text-blue-300" : "text-gray-900 dark:text-white"}`}>
+                        <div
+                          className={`text-sm font-semibold ${
+                            activePreset === key
+                              ? "text-primary"
+                              : "text-slate-900 dark:text-white"
+                          }`}
+                        >
                           {preset.name}
                         </div>
-                        <div className="mt-0.5 text-[10px] text-gray-500">{preset.description}</div>
+                        <div className="mt-0.5 text-[10px] text-slate-500">
+                          {preset.description}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -584,7 +628,7 @@ const ModalLayout = () => {
                 {/* SMILES Input */}
                 <div className="mb-5">
                   <div className="mb-2 flex items-center">
-                    <label className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <label className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       SMILES String
                     </label>
                     <Tooltip content="SMILES (Simplified Molecular Input Line Entry System) is a text notation for representing molecular structures. You can get SMILES from the Research page or combine molecules above." />
@@ -603,14 +647,16 @@ const ModalLayout = () => {
                         const idx = Math.floor(Math.random() * moleculeList.length);
                         setSmiles(moleculeList[idx].smilesStructure);
                       }}
-                      className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-300 dark:hover:bg-gray-600"
+                      className="rounded-xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       Random
                     </button>
                   </div>
                   {smiles && (
-                    <div className="mt-3 rounded-lg bg-gray-50 p-3 dark:bg-[#252525]">
-                      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Preview</div>
+                    <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-900/60">
+                      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
+                        Preview
+                      </div>
                       <MoleculeStructure
                         id="input-molecule-preview"
                         structure={smiles}
@@ -624,7 +670,7 @@ const ModalLayout = () => {
                 {/* Number of Molecules */}
                 <div className="mb-5">
                   <div className="mb-2 flex items-center">
-                    <label className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <label className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       Number of Molecules
                     </label>
                     <Tooltip content="How many new molecules to generate. More molecules means more options but takes longer to compute." />
@@ -647,16 +693,16 @@ const ModalLayout = () => {
                   <button
                     type="button"
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                    className="text-xs font-medium text-primary hover:text-primary/80"
                   >
                     {showAdvanced ? "− Hide" : "+ Show"} advanced settings
                   </button>
 
                   {showAdvanced && (
-                    <div className="mt-3 grid gap-4 rounded-lg bg-gray-50 p-4 dark:bg-[#252525] md:grid-cols-3">
+                    <div className="mt-3 grid gap-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-900/60 md:grid-cols-3">
                       <div>
                         <div className="mb-2 flex items-center">
-                          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                          <label className="text-xs font-medium text-slate-600 dark:text-slate-300">
                             Min Similarity
                           </label>
                           <Tooltip content="Minimum structural similarity to input (0-1). Lower values produce more diverse results." />
@@ -676,7 +722,7 @@ const ModalLayout = () => {
                       </div>
                       <div>
                         <div className="mb-2 flex items-center">
-                          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                          <label className="text-xs font-medium text-slate-600 dark:text-slate-300">
                             Particles
                           </label>
                           <Tooltip content="Number of particles in the optimization. More particles = better exploration but slower." />
@@ -695,7 +741,7 @@ const ModalLayout = () => {
                       </div>
                       <div>
                         <div className="mb-2 flex items-center">
-                          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                          <label className="text-xs font-medium text-slate-600 dark:text-slate-300">
                             Iterations
                           </label>
                           <Tooltip content="Number of optimization iterations. More iterations = better results but takes longer." />
@@ -718,7 +764,7 @@ const ModalLayout = () => {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-xl bg-gradient-to-r from-primary to-indigo-500 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:from-primary/90 hover:to-indigo-500/90 hover:shadow disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={loading || !smiles.trim()}
                 >
                   {loading ? (
@@ -739,12 +785,12 @@ const ModalLayout = () => {
 
             {/* Results - Loading State */}
             {loading && (
-              <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-[#1f1f1f]">
+              <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
                 <div className="mb-4 flex items-center gap-3">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
                     Generated Molecules
                   </h3>
-                  <span className="flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                  <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
                     <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -762,12 +808,12 @@ const ModalLayout = () => {
 
             {/* Results - Actual Data */}
             {!loading && molecules.length > 0 && (
-              <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-[#1f1f1f]">
+              <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
                 <div className="mb-4 flex items-center gap-3">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
                     Generated Molecules
                   </h3>
-                  <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                  <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                     {molecules.length} results
                   </span>
                 </div>
@@ -775,25 +821,25 @@ const ModalLayout = () => {
                   {molecules.map((mol: any, index) => (
                     <div
                       key={index}
-                      className="group rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-[#1f1f1f]"
+                      className="group rounded-2xl border border-slate-200/70 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-[#111827]/80"
                     >
                       <MoleculeStructure
                         id={`mol-${index + 1}`}
                         structure={mol.structure}
                         scores={mol.score}
                       />
-                      <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-700">
+                      <div className="mt-3 flex items-center justify-between border-t border-slate-200/70 pt-3 dark:border-white/10">
                         <button
                           type="button"
                           onClick={() => researchMolecule(mol.structure)}
-                          className="rounded-md bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                          className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
                         >
                           Research
                         </button>
                         <button
                           type="button"
                           onClick={() => copyToClipboard(mol.structure, `mol-${index}`)}
-                          className="text-xs text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400"
+                          className="text-xs text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-300"
                         >
                           {copied === `mol-${index}` ? "Copied!" : "Copy SMILES"}
                         </button>
@@ -807,40 +853,42 @@ const ModalLayout = () => {
 
           {/* History Sidebar - Better separated items */}
           <div className="lg:col-span-1">
-            <div className="sticky top-4 rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-[#1f1f1f]">
-              <div className="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+            <div className="sticky top-4 rounded-2xl border border-slate-200/70 bg-white/80 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.6)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111827]/80">
+              <div className="border-b border-slate-200/70 px-4 py-3 dark:border-white/10">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
                   History
                 </h3>
               </div>
               <div className="max-h-[600px] overflow-y-auto p-3">
                 {history.length === 0 ? (
-                  <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-[#252525]">
-                    <p className="text-xs text-gray-500">No generation history yet</p>
+                  <div className="rounded-xl bg-slate-50 p-4 text-center dark:bg-slate-900/60">
+                    <p className="text-xs text-slate-500">
+                      No generation history yet
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {history.map((entry: any, index) => (
                       <div 
                         key={entry._id || index} 
-                        className="rounded-lg border border-gray-100 bg-gray-50 p-3 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-[#252525] dark:hover:bg-[#2a2a2a]"
+                        className="rounded-xl border border-slate-200/70 bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-slate-900/60 dark:hover:bg-slate-900"
                       >
                         <div className="mb-2 flex items-start justify-between">
-                          <code className="block max-w-[180px] truncate rounded bg-white px-1.5 py-0.5 font-mono text-[10px] text-gray-600 dark:bg-[#1a1a1a] dark:text-gray-400">
+                          <code className="block max-w-[180px] truncate rounded bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-600 dark:bg-slate-900 dark:text-slate-300">
                             {entry.smiles}
                           </code>
-                          <span className="ml-2 whitespace-nowrap rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                          <span className="ml-2 whitespace-nowrap rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                             {entry.numMolecules} mol
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] text-gray-400">
+                          <span className="text-[10px] text-slate-400">
                             {new Date(entry.createdAt).toLocaleDateString()}
                           </span>
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
-                              className="text-[10px] font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                              className="text-[10px] font-semibold text-primary hover:text-primary/80"
                               onClick={() => setMolecules(entry.generatedMolecules)}
                             >
                               View

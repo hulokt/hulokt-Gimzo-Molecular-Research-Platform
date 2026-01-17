@@ -31,16 +31,26 @@ export default function DefaultLayout({
 
   return (
     <>
-      <div className="flex">
+      <div className={`flex ${pathname === "/message" || pathname === "/" ? "h-screen overflow-hidden" : "min-h-screen"}`}>
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <div className="relative flex flex-1 flex-col lg:ml-72.5">
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          <main>
+          <main
+            className={`flex-1 bg-slate-50 dark:bg-slate-950 ${
+              pathname === "/message" || pathname === "/" ? "overflow-hidden" : ""
+            }`}
+          >
             <div
-              className={`mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 ${
-                pathname === "/molecule-bank" || publicRoutes.includes(pathname)
-                  ? "overflow-hidden"
-                  : ""
+              className={`${
+                publicRoutes.includes(pathname)
+                  ? "w-full min-h-full overflow-hidden"
+                  : pathname === "/message"
+                  ? "mx-auto h-full min-h-full max-w-screen-2xl overflow-hidden p-4"
+                  : pathname === "/model"
+                  ? "mx-auto min-h-full max-w-screen-2xl"
+                  : pathname === "/molecule-bank"
+                  ? "mx-auto max-w-screen-2xl min-h-full overflow-hidden"
+                  : "mx-auto max-w-screen-2xl min-h-full"
               }`}
             >
               {children}
