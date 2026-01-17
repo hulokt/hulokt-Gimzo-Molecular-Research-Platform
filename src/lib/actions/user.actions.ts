@@ -6,6 +6,13 @@ import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
 import { sendVerificationEmail, sendResetPasswordEmail } from "./email.actions";
 
+const handleError = (error: unknown) => {
+  if (error instanceof Error) {
+    throw error;
+  }
+  throw new Error("An unexpected error occurred.");
+};
+
 export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase();
